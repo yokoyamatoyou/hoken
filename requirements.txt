@@ -1,0 +1,14 @@
+customtkinter
+openai
+python-docx
+PyPDF2
+Pillow
+openpyxl
+python-dotenv
+requests
+beautifulsoup4
+pydantic
+
+scikit-learn
+graphviz
+mermaid-py
