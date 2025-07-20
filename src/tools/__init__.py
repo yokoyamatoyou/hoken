@@ -1,8 +1,20 @@
-from .web_scraper import get_tool as get_web_scraper
-from .sqlite_tool import get_tool as get_sqlite_tool
-from .mermaid_tool import get_tool as get_mermaid_tool
-from .graphviz_tool import get_tool as get_graphviz_tool
 from .base import Tool, execute_tool
+
+def get_web_scraper():
+    from .web_scraper import get_tool
+    return get_tool()
+
+def get_sqlite_tool():
+    from .sqlite_tool import get_tool
+    return get_tool()
+
+def get_mermaid_tool():
+    from .mermaid_tool import get_tool
+    return get_tool()
+
+def get_graphviz_tool():
+    from .graphviz_tool import get_tool
+    return get_tool()
 
 
 def get_default_tools() -> list[Tool]:

@@ -35,18 +35,18 @@ When modifying this project, keep the following behaviors in mind:
 14. A "会話を保存" button in the settings panel lets users manually save the current conversation to a JSON file. The directory defaults to `conversations` but can be overridden with the `CONVERSATION_DIR` environment variable. Saving also happens automatically after every assistant response.
 15. The GUI design should adopt a Google-inspired palette and avoid the default `"blue"` theme. Configure a custom theme in `setup_ui()` that uses accent blue `#1A73E8`, left sidebar background `#F1F3F4`, diagram sidebar `#F8F9FA`, and chat area `#FFFFFF`. Text color should remain dark gray `#202124` for readability. Add a geometric window icon via `self.window.iconbitmap()` and adjust widget corner radii and border widths so the interface looks less like stock CustomTkinter.
 
-16. The command line runner accepts `--model` to override the default `OPENAI_MODEL` when creating the LLM.
-17. Automatic conversation saving runs in a background thread without showing a popup so the UI remains responsive.
-18. The Tree-of-Thoughts agent streams search steps while running but removes them from the chat once the final answer is produced so only the answer is saved. Document further changes to these features in this section so future Codex sessions remain aware of the expected behavior.
-19. A simple Chain-of-Thought (CoT) agent is available. Select ``cot`` from the CLI ``--agent`` option or the GUI drop-down to run a linear reasoning loop without tool use.
-20. A presentation agent can generate HTML slides. Use ``--agent presentation`` on the CLI or choose ``プレゼンテーション`` in the GUI.
-21. The Tree-of-Thoughts agent reads `TOT_DEPTH` and `TOT_BREADTH` from the environment to set its search depth and branching factor. Invalid values cause `parse_args` to exit with an error on the CLI or display an error in the GUI.
-
-22. The preview sidebar also includes a "コピー" button that copies the PNG file path to the clipboard so users can easily reference the generated image.
-23. ``get_font_family`` checks the ``PREFERRED_FONT`` environment variable. When set it overrides the default "Meiryo" preference before falling back to "Helvetica" if the font is unavailable.
-24. The Tree-of-Thoughts agent includes an ``EXTREME`` preset that sets depth and breadth to ``(5, 5)`` when ``TOT_LEVEL`` is ``EXTREME`` and explicit ``--depth``/``--breadth`` options are not provided.
-25. The main window now uses a grid-based layout so the chat area and sidebars resize with the window. The minimum size is 800x600.
-26. `create_mermaid_diagram` sanitizes input by removing ```mermaid fences and HTML tags. If generation fails the preview shows an error and a "修正" button lets the user retry.
+16. **保険文書分析AIへの特化**: このアプリケーションは、保険の約款や契約書などの文書を分析することに特化しています。
+17. **RAG (Retrieval-Augmented Generation) パイプライン**:
+    *   `src/document_loader.py`: PDF, Word(.docx), URLからテキストを抽出します。`langchain`への依存をなくし、`pypdf`, `python-docx`, `requests`, `BeautifulSoup`を直接使用して安定性を確保しています。
+    *   `src/vector_store_manager.py`: 読み込んだドキュメントをチャンクに分割し、OpenAIのEmbedding API (`text-embedding-3-small`) を使ってベクトル化します。ベクトルは`faiss-cpu`を用いてメモリ上のインデックスに保存され、高速な検索が可能です。
+18. **GUIの機能**:
+    *   `src/ui/main.py`: `CustomTkinter`を用いて構築されています。
+    *   **情報ソースの読み込み**: ファイルアップロードボタンとURL入力欄から、分析対象の文書を読み込むことができます。処理はバックグラウンドスレッドで実行され、UIはフリーズしません。
+    *   **チャットインターフェース**: ユーザーは読み込んだ文書に対して自然言語で質問できます。
+    *   **引用表示**: AIの回答が生成されると、その根拠となった文書の一部が「引用元」エリアに表示されます。これにより、回答の透明性と信頼性を高めています。
+19. **AIのペルソナ**: AIは「保険業界のベテラン専門家」として動作するように、システムプロンプトが設定されています。提供されたコンテキストに基づいて、正確かつ丁寧な回答を生成します。
+20. **モデル選択**: UIから `gpt-4.1`, `gpt-4.1-mini`, `gpt-4o`, `gpt-3.5-turbo` などのOpenAIモデルを選択できます。
+21. **依存関係の安定化**: 開発過程で`langchain`とその依存関係に起因する深刻なバージョン競合が発生したため、`langchain`への依存を完全に排除するリファクタリングを行いました。これにより、アプリケーションの安定性と保守性が向上しています。
 
 ---
 
